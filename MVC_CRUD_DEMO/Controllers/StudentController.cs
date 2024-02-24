@@ -83,33 +83,36 @@ namespace MVC_CRUD_DEMO.Controllers
         [HttpPost]
         public ActionResult Create(Student student)
         {
-            try
+            if (ModelState.IsValid)
             {
-                using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["TestDBConnection"].ConnectionString))
+                try
                 {
-                    using (SqlCommand cmd = new SqlCommand())
+                    using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["TestDBConnection"].ConnectionString))
                     {
-                        connection.Open();
-                        string query = "insert into student ([Name], [Address], [mobile]) values(@Name, @Address, @mobile)";
-                        cmd.CommandText = query;
-                        cmd.Parameters.AddWithValue("@Name", student.Name);
-                        cmd.Parameters.AddWithValue("@Address", student.Address);
-                        cmd.Parameters.AddWithValue("@mobile", student.Mobile);
-                        cmd.Connection = connection;
-                        int result = cmd.ExecuteNonQuery();
-                        if (result > 0)
+                        using (SqlCommand cmd = new SqlCommand())
                         {
-                            return RedirectToAction("Index");
+                            connection.Open();
+                            string query = "insert into student ([Name], [Address], [mobile]) values(@Name, @Address, @mobile)";
+                            cmd.CommandText = query;
+                            cmd.Parameters.AddWithValue("@Name", student.Name);
+                            cmd.Parameters.AddWithValue("@Address", student.Address);
+                            cmd.Parameters.AddWithValue("@mobile", student.Mobile);
+                            cmd.Connection = connection;
+                            int result = cmd.ExecuteNonQuery();
+                            if (result > 0)
+                            {
+                                return RedirectToAction("Index");
+                            }
+
                         }
 
+
                     }
-
-
                 }
-            }
-            catch
-            {
-                return View();
+                catch
+                {
+                    return View();
+                }
             }
             return View();
         }
